@@ -10,5 +10,5 @@ RUN cd /app \
 
 RUN cd /tmp \
     && wget -O rtclite.zip https://github.com/TyIsI/rtclite/archive/master.zip \
-	&& pip install -U rtclite.zip \
-	&& rm rtclite.zip
+    && pip install -U rtclite.zip \
+    && rm rtclite.zip
