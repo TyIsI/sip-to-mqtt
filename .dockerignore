@@ -1,0 +1,10 @@
+.Python
+.dockerignore
+.gitignore
+.vscode
+attic
+bin
+include
+lib
+pip-selfcheck.json
+test.sh
