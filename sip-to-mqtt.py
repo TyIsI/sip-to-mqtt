@@ -29,9 +29,6 @@ def on_mqtt_connect(client, userdata, flags, rc):
     service_status['ts'] = int(time.mktime(datetime.now().timetuple()))
     client.publish(MQTT_STATUS_TOPIC, json.dumps(service_status))
 
-    mylogger.info("on_mqtt_connect: Subscribing to %s", MQTT_RING_TOPIC)
-    client.subscribe(MQTT_RING_TOPIC)
-
 
 def on_mqtt_message(client, userdata, msg):
     global mylogger
@@ -62,7 +59,7 @@ def sipSetupTask():
     if sip_connected == False:
         SIP_INFO = '"sip-to-mqtt" <sip:'+SIP_USER+'@'+SIP_HOST+'>'
         mylogger.debug("sipSetupTask: Connecting as %s", SIP_INFO)
-        result, reason = (yield myself.bind(SIP_INFO, username=SIP_USER, password=SIP_PASS, interval=60, refresh=True, update=True))
+        result, reason = (yield myself.bind(SIP_INFO, username=SIP_USER, password=SIP_PASS, interval=3600, refresh=True, update=True))
         if result == 'failed':
             mylogger.critical('sipSetupTask: bind failed %s', reason)
         else:
@@ -80,7 +77,7 @@ def sipLoopTask():
         mqttClient.publish(MQTT_RING_TOPIC, json.dumps({"msg":arg[0]}))
     else:
         mylogger.error('sipLoopTask: unknown/unhandled cmd: %s', cmd)
-        mylogger.error('sipLoopTask: args: %s', args)
+        mylogger.error('sipLoopTask: args: %s', arg)
 
 
 ##
@@ -103,7 +100,7 @@ if __name__ == "__main__":
     mqttClient.on_message = on_mqtt_message
 
     mylogger.debug("Connecting MQTT...")
-    mqttClient.connect(MQTT_HOST, MQTT_PORT, 60)
+    mqttClient.connect(MQTT_HOST, MQTT_PORT, 15)
     mqttClient.loop_start()
 
     mylogger.info("Setting up SIP sock...")
